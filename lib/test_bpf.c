@@ -6631,7 +6631,8 @@ static struct bpf_prog *generate_filter(int which, int *err)
 		fp = bpf_prog_select_runtime(fp, err);
 		if (*err) {
 			pr_cont("FAIL to select_runtime err=%d\n", *err);
-			return NULL;
+		        bpf_prog_free(prog);
+                        return NULL;
 		}
 		break;
 	}
