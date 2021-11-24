@@ -89,12 +89,15 @@ aic7770_probe(struct device *dev)
 	if (name == NULL)
 		return (ENOMEM);
 	ahc = ahc_alloc(&aic7xxx_driver_template, name);
-	if (ahc == NULL)
+	if (ahc == NULL) {
+                kfree(name);
 		return (ENOMEM);
+        }
 	ahc->dev = dev;
 	error = aic7770_config(ahc, aic7770_ident_table + edev->id.driver_data,
 			       eisaBase);
 	if (error != 0) {
+                kfree(name);
 		ahc->bsh.ioport = 0;
 		ahc_free(ahc);
 		return (error);
