@@ -126,15 +126,20 @@ static int __init meson_mx_socinfo_init(void)
 	np = of_find_matching_node(NULL, meson_mx_socinfo_analog_top_ids);
 	if (np) {
 		analog_top_regmap = syscon_node_to_regmap(np);
-		if (IS_ERR(analog_top_regmap))
+		if (IS_ERR(analog_top_regmap)) {
+			of_node_put(np);
 			return PTR_ERR(analog_top_regmap);
+		}
 
 		ret = regmap_read(analog_top_regmap,
 				  MESON_MX_ANALOG_TOP_METAL_REVISION,
 				  &metal_rev);
-		if (ret)
+		if (ret) {
+			of_node_put(np);
 			return ret;
+		}
 	}
+	of_node_put(np);
 
 	ret = regmap_read(assist_regmap, MESON_MX_ASSIST_HW_REV, &major_ver);
 	if (ret < 0)
